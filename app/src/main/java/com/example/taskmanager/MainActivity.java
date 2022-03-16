@@ -4,7 +4,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 toDoList.add(editText.getText().toString());
                 arrayAdapter.notifyDataSetChanged();
                 TareaModel tm= new TareaModel(editText.getText().toString());
-                boolean ex=gestorDB.añadir(tm);
+                boolean ex=gestorDB.añadirTarea(tm);
                 Log.i("2", String.valueOf(ex));
                 editText.setText(" ");
             }});
