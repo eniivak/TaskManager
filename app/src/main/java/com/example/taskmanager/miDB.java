@@ -57,7 +57,7 @@ public class miDB extends SQLiteOpenHelper {
 
     }
     public boolean existeUsuario(Usuario usuario){
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
 
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
@@ -89,6 +89,38 @@ public class miDB extends SQLiteOpenHelper {
         return false;
     }
 
+    }
+
+    public boolean contrabien(Usuario usuario){
+        SQLiteDatabase db = this.getReadableDatabase();
+        boolean bien=false;
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {USUNOM_COL,CONTRA_COL};
+
+        // Filter results WHERE "title" = 'My Title'
+        String selection = CONTRA_COL + "= ?";
+        String[] selectionArgs = { usuario.getContraseña() };
+
+
+        Cursor cursor = db.query(
+                USER_TABLE,   // The table to query
+                null,             // The array of columns to return (pass null to get all)
+                selection,              // The columns for the WHERE clause
+                selectionArgs,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                null              // The sort order
+        );
+        try{
+            if(cursor.moveToFirst()){ //está bien la contraseña
+                bien= true;
+            }
+        }
+        catch (Exception e){ //no está bien
+            bien= false;
+        }
+        return bien;
     }
     public boolean añadirTarea(TareaModel tareaM){
         SQLiteDatabase db = this.getWritableDatabase();
