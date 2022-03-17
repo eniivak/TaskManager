@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,41 +33,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         miDB gestorDB= new miDB(MainActivity.this);
         Bundle extras= getIntent().getExtras();
-       /* ArrayList<TareaModel> lista=gestorDB.readCourses();
-        Log.i("1",lista.toString());
-        Log.i("2","algo");*/
+
+
         toDoList= new ArrayList<>();
         arrayAdapter= new ArrayAdapter<>(this,R.layout.list_view_layout,toDoList);
         listView = findViewById(R.id.id_list_view);
         editText= findViewById(R.id.id_edit_text);
         listView.setAdapter(arrayAdapter);
 
+
         //DISPLAY ALL
-
-
-        ArrayList<TareaModel> listaTareas=gestorDB.displayAll(extras.getString("user"));
-        for (int i=0; i<listaTareas.size();i++){
-            Log.i("tarea"," "+listaTareas.size());
-            TareaModel tm = new TareaModel(listaTareas.get(i).getNombre(),extras.getString("user"));
-            //tm=listaTareas.get(i);
-            toDoList.add(tm.getNombre());
-            arrayAdapter.notifyDataSetChanged();
-
-        }
-
-
+        display(gestorDB,extras.getString("user"));
 
         //ABRIR TAREASETTINGS CUANDO SE TOCA UN ELEMENTO DEL LISTVIEW
+       // final ArrayList<TareaModel>[] finalListaTareas = new ArrayList[]{listaTareas[0]};
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //toDoList.removeAll(Arrays.asList(finalListaTareas));
                 TextView textView= (TextView) view;
                 /*textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);*/
                 Intent intent= new Intent(MainActivity.this, TareaSettings.class);
                 intent.putExtra("tarea",textView.getText()); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
+                intent.putExtra("usuario",extras.getString("user"));
                 startActivity(intent);
+
+                toDoList.clear();
+                display(gestorDB,extras.getString("user"));// si haces esto se printean dos veces los elementos en el listview, habra que encontrar la manera de updatearlo
+
             }
         });
+
 
 
         //LISTENER DEL BOTON AÑADIR
@@ -81,6 +78,17 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    private void display(miDB gestorDB,String usuario){
+        final ArrayList<TareaModel>[] listaTareas = new ArrayList[]{gestorDB.displayAll(usuario)};
+        for (int i = 0; i< listaTareas[0].size(); i++){
+            Log.i("tarea"," "+ listaTareas[0].size());
+            TareaModel tm = new TareaModel(listaTareas[0].get(i).getNombre(),usuario);
+            toDoList.add(tm.getNombre());
+            arrayAdapter.notifyDataSetChanged();
+
+        }
     }
 
     public void addItemToList(View view, miDB gestorDB,String usuario){

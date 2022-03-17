@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -11,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="@color/black"
         android:padding="10dp">
 
         <EditText
@@ -19,7 +21,9 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:hint="Escribir tarea" />
+            android:hint="Escribir tarea"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/id_boton_anadir"
@@ -33,13 +37,14 @@
         android:id="@+id/id_left_section"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/id_bottom_section"
-        android:background="#ddd">
+        android:background="@color/black"
+        android:layout_above="@+id/id_bottom_section">
 
         <ListView
             android:id="@+id/id_list_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:textColor="@color/white">
 
         </ListView>
     </LinearLayout>

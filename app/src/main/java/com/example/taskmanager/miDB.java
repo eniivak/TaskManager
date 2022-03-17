@@ -155,9 +155,15 @@ public class miDB extends SQLiteOpenHelper {
 
     public void borrarTarea(TareaModel tareaM){
         SQLiteDatabase db = this.getWritableDatabase();
-            String deletequery= "DELETE FROM"+TAREA_TABLE+"WHERE "+NAME_COL + "="+tareaM.getNombre();
-       //db.delete(TAREA_TABLE, tareaM.getNombre(), null);
-        db.execSQL(deletequery);
+            //String deletequery= "DELETE FROM "+TAREA_TABLE+" WHERE "+NAME_COL + "="+tareaM.getNombre();
+        int delete = db.delete(TAREA_TABLE, NAME_COL +" = "+ "'"+tareaM.getNombre()+"'" , null);
+        if(delete==-1){
+            //se ha borrado mal
+            Log.i("DELETE","se ha borrado mal");
+        }else{
+            Log.i("DELETE","se ha borrado bien");
+        }
+        //db.execSQL(deletequery);
 
     }
     // we have created a new method for reading all the courses.
