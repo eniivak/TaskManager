@@ -5,14 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.List;
 
 public class miDB extends SQLiteOpenHelper {
 
@@ -29,6 +27,8 @@ public class miDB extends SQLiteOpenHelper {
     private static final String NAME_COL = "nombre";
     // below variable id for our course duration column.
     private static final String DESCRIPTION_COL = "descr";
+    private static final String USERNAME_COL = "usuario";
+
 
 
 
@@ -38,12 +38,15 @@ public class miDB extends SQLiteOpenHelper {
     private static final String CONTRA_COL = "contra";
 
     public miDB(@Nullable Context context) {
+
         super(context, DB_NAME, null, DB_VERSION);
+        //context.deleteDatabase("taskmanager.sqlite");
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String querytarea = "CREATE TABLE " + TAREA_TABLE + " ("+ ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, " + NAME_COL + " TEXT," + DESCRIPTION_COL + " TEXT)" ;
+
+        String querytarea = "CREATE TABLE " + TAREA_TABLE + " ("+ ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, " + NAME_COL + " TEXT," + DESCRIPTION_COL + " TEXT,"+USERNAME_COL+" TEXT)" ;
         String queryusuario = "CREATE TABLE " + USER_TABLE + " ("+ IDU_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, " + USUNOM_COL + " TEXT," + CONTRA_COL + " TEXT)" ;
         // at last we are calling a exec sql
         // method to execute above sql query
@@ -66,7 +69,7 @@ public class miDB extends SQLiteOpenHelper {
         // Filter results WHERE "title" = 'My Title'
         String selection = USUNOM_COL + " = ?";
         String[] selectionArgs = { usuario.getUsuario() };
-
+        Log.i("nombre del usuario",usuario.getUsuario());
 
         Cursor cursor = db.query(
                USER_TABLE,   // The table to query
@@ -101,7 +104,7 @@ public class miDB extends SQLiteOpenHelper {
         // Filter results WHERE "title" = 'My Title'
         String selection = CONTRA_COL + "= ?";
         String[] selectionArgs = { usuario.getContraseña() };
-
+        Log.i("Contraseña se ha hecho bien:",selectionArgs.toString());
 
         Cursor cursor = db.query(
                 USER_TABLE,   // The table to query
@@ -128,6 +131,7 @@ public class miDB extends SQLiteOpenHelper {
 
         cv.put(NAME_COL,tareaM.getNombre());
         cv.put(DESCRIPTION_COL, tareaM.getDescrip());
+        cv.put(USUNOM_COL,tareaM.getUsuario());
 
         long insert=db.insert(TAREA_TABLE, null, cv);
         Log.i("I","mmm seha hecho bien?");
@@ -149,43 +153,51 @@ public class miDB extends SQLiteOpenHelper {
 
     }
 
-    public boolean borrar(TareaModel tareaM){
+    public void borrarTarea(TareaModel tareaM){
         SQLiteDatabase db = this.getWritableDatabase();
+            String deletequery= "DELETE FROM"+TAREA_TABLE+"WHERE "+NAME_COL + "="+tareaM.getNombre();
+       //db.delete(TAREA_TABLE, tareaM.getNombre(), null);
+        db.execSQL(deletequery);
 
-        int delete = db.delete("tarea", tareaM.getNombre(), null);
-
-        if (delete==-1){
-            return false;
-        }
-        else{
-            return true;
-        }
     }
     // we have created a new method for reading all the courses.
-    public ArrayList<TareaModel> readCourses() {
-        // on below line we are creating a
-        // database for reading our database.
+    public ArrayList<TareaModel> displayAll(String usuario){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        // on below line we are creating a cursor with query to read data from database.
-        Cursor cursorTarea = db.rawQuery("SELECT * FROM tarea", null);
-
         // on below line we are creating a new array list.
-        ArrayList<TareaModel> courseModalArrayList = new ArrayList<>();
+        ArrayList<TareaModel> tmlista = new ArrayList<>();
+        TareaModel tm = null;
 
-        // moving our cursor to first position.
-        if (cursorTarea.moveToFirst()) {
-            do {
-                // on below line we are adding the data from cursor to our array list.
-                courseModalArrayList.add(new TareaModel(cursorTarea.getString(2)));
-            } while (cursorTarea.moveToNext());
-            // moving our cursor to next.
+        // Filter results WHERE "title" = 'My Title'
+        String selection = USERNAME_COL + "= ?";
+        String[] selectionArgs = { usuario };
+
+
+        Cursor cursor = db.query(
+                TAREA_TABLE,   // The table to query
+                new String[]{NAME_COL, DESCRIPTION_COL, USERNAME_COL},             // The array of columns to return (pass null to get all)
+                selection,              // The columns for the WHERE clause
+                selectionArgs,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                null        );
+        try{
+
+                if (cursor.moveToFirst()) { //tiene tareas
+                    do {
+                        int nombre = cursor.getColumnIndex("nombre");
+                        tm= new TareaModel(cursor.getString(nombre),usuario);
+                        tmlista.add(tm);
+                    } while (cursor.moveToNext());
+                }
+
         }
-        // at last closing our cursor
-        // and returning our array list.
-        cursorTarea.close();
-        return courseModalArrayList;
+        catch (Exception e){ //no tiene tareas
+            Log.i("error","error");
+        }
+        return tmlista;
     }
+
 
 }
 

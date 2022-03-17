@@ -5,8 +5,10 @@ public class TareaModel {
     private String nombre;
     private String descrip;
     private String data;
-    public TareaModel(String nom){
+    private String usuario;
+    public TareaModel(String nom, String usuario){
         this.nombre=nom;
+        this.usuario = usuario;
     }
 
     public int getId() {
@@ -40,4 +42,13 @@ public class TareaModel {
     public void setData(String data) {
         this.data = data;
     }
+
+    public void setUsuario(String usuario) {
+        this.usuario =usuario;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
 }

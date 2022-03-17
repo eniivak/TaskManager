@@ -38,28 +38,12 @@
 
         <ListView
             android:id="@+id/id_list_view"
-            android:layout_marginRight="100dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         </ListView>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="@+id/id_left_section"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/id_boton_borrar"
-            android:layout_marginLeft="315dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-
-            android:text="Borrar" />
-    </LinearLayout>
 
 
 </RelativeLayout>

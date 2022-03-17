@@ -29,22 +29,32 @@ public class Login extends AppCompatActivity {
 
                 Usuario usuario= new Usuario(textousuario.getText().toString(),textocontra.getText().toString());
                 if(gestorDB.existeUsuario(usuario)){ //el usuario esta creado
-                    //aqui dentro tengo que mirar que la contraseña este bien
-                    if(gestorDB.contrabien(usuario)){
+
+                    if(verificarCredenciales(gestorDB,usuario)){//verificar que la contraseña es correcta
                         Intent i= new Intent(Login.this, MainActivity.class);
 
                         i.putExtra("user", textousuario.getText().toString()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
                         startActivity(i);
                     }
+
                     else{
                         //preguntar que meta otra vez la contraseña
+                        textocontra.setText("");
                         AlertDialog.Builder adb=new AlertDialog.Builder(Login.this);
-                        adb.setTitle("Añadir?");
-                        adb.setMessage("Seguro que quieres añadir la tarea?");
+                        adb.setTitle("CONTRASEÑA INCORRECTA");
+                        adb.setMessage("Por favor, vuelve a introducir la contraseña");
                         adb.setNegativeButton("Cancelar", null);
                         adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 //comprobar si esta bien la contraseña
+
+                                usuario.setContraseña(textocontra.getText().toString());
+                                if(verificarCredenciales(gestorDB,usuario)){
+                                    Intent i= new Intent(Login.this, MainActivity.class);
+
+                                    i.putExtra("user", textousuario.getText().toString()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
+                                    startActivity(i);
+                                }
                             }});
                         adb.show();
                     }
@@ -62,11 +72,20 @@ public class Login extends AppCompatActivity {
                     adb.show();
                 }
 
-                Log.i("3","pues no esta creado"); //quieres crearlo? Dialogo, y si dice que sí, lo llevas a otro xml //gestorDB.añadirUsuario(usuario);
+
 
             }
         });
 
 
     }
+    private boolean verificarCredenciales(miDB gestorDB,Usuario usuario){
+        if(gestorDB.contrabien(usuario)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
 }
