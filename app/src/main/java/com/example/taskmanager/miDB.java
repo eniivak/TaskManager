@@ -59,6 +59,7 @@ public class miDB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
+
     public boolean existeUsuario(Usuario usuario){
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -80,19 +81,20 @@ public class miDB extends SQLiteOpenHelper {
                 null,                   // don't filter by row groups
                 null              // The sort order
         );
-    try{
-        if (cursor.moveToFirst()){
-            return true; //está vacío
+        try{
+            if (cursor.moveToFirst()){
+                return true; //está vacío
+            }
+            else{
+                return false;
+            }
         }
-        else{
+        catch (Exception e){
             return false;
         }
-    }
-    catch (Exception e){
-        return false;
-    }
 
     }
+
 
     public boolean contrabien(Usuario usuario){
         SQLiteDatabase db = this.getReadableDatabase();
@@ -125,6 +127,8 @@ public class miDB extends SQLiteOpenHelper {
         }
         return bien;
     }
+
+
     public boolean añadirTarea(TareaModel tareaM){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv= new ContentValues();
@@ -142,6 +146,7 @@ public class miDB extends SQLiteOpenHelper {
             return true;
         }
     }
+
     public  void añadirUsuario(Usuario usuario){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv= new ContentValues();
@@ -204,6 +209,16 @@ public class miDB extends SQLiteOpenHelper {
         return tmlista;
     }
 
+    public void guardarDesc(TareaModel tarea){
+        SQLiteDatabase db= this.getWritableDatabase();
+        ContentValues cv= new ContentValues();
+
+        cv.put(NAME_COL,tarea.getNombre());
+        cv.put(USUNOM_COL,tarea.getUsuario());
+        cv.put(DESCRIPTION_COL,tarea.getDescrip());
+
+        db.update(TAREA_TABLE,cv,NAME_COL+"="+ "'"+tarea.getNombre()+ "'"+" and "+ USERNAME_COL+"="+ "'"+tarea.getUsuario()+"'",null);
+    }
 
 }
 
